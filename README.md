@@ -6,6 +6,7 @@ Download the source code and unzip it. Get a Twitter Developer Account and save 
   "consumer_key" : "abcdefgh12345"
  
 After that, open the command line on the folder you extracted the source files to. Run the following command to install required dependencies:
+    
     pip install -r "requirements.txt"
    
 And you're ready to go. The template for use is the following:
