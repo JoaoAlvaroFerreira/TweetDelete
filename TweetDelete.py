@@ -7,20 +7,19 @@ import sys
 
 
 def pre_clean():
-    if not os.path.exists('tweet.json'):
+    if not os.path.exists('tweets.js'):
         with ZipFile('archive.zip', 'r') as z:
-            with open('tweet.json', 'wb') as f:
-                f.write(z.read('data/tweet.js')[25:])
+            with open('tweets.js', 'wb') as f:
+                f.write(z.read('data/tweets.js')[25:])
 
 def post_clean(tweets, number):
     tweets = tweets[number:]
-    with open('tweet.json', 'w') as outfile:
+    with open('tweets.js', 'w') as outfile:
         outfile.write(json.dumps(tweets , sort_keys=False, indent=2))
 
 def loadTweets():
-    with open('./tweet.json', errors="ignore") as f:
-        tweets = json.load(f, encoding="utf8")
-    
+    with open('./tweets.js', encoding="utf8", errors="ignore") as f:
+        tweets = json.load(f)
     return tweets
 
 def printTweet(tweet):
@@ -31,39 +30,30 @@ def printTweet(tweet):
 def auth():
 
     with open('./keys.json', errors="ignore") as f:
-        data = json.load(f, encoding="utf8")
-
+        data = json.load(f)
     auth = data[0]
-
     consumer_key = auth['consumer_key']
     consumer_secret = auth['consumer_secret']
     access_token = auth['access_token']
     access_token_secret = auth['access_token_secret']
-
     request_token_url = "https://api.twitter.com/oauth/request_token"
     oauth = OAuth1Session(consumer_key, client_secret=consumer_secret)
-
     try:
         fetch_response = oauth.fetch_request_token(request_token_url)
     except ValueError:
         print(
             "There may have been an issue with the consumer_key or consumer_secret you entered."
         )
-
     resource_owner_key = fetch_response.get("oauth_token")
     resource_owner_secret = fetch_response.get("oauth_token_secret")
     print("Got OAuth token: %s" % resource_owner_key)
-
-
     oauth = OAuth1Session(
         consumer_key,
         client_secret=consumer_secret,
         resource_owner_key=access_token,
         resource_owner_secret=access_token_secret,
     )
-
     return oauth
-
 def deleteTweet(tweet_id, oauth):
 
     try:
